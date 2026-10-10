@@ -7,6 +7,8 @@ using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Open up security restrictions to allow this to work
 // Not recommended in production
 var deploySwaggerUI = builder.Configuration.GetValue<bool>("DeploySwaggerUI");
@@ -17,11 +19,11 @@ builder.Services.AddSecurityHeaderPolicies()
     {
         // sum is weak security headers due to Swagger UI deployment
         // should only use in development
-        if (deploySwaggerUI)
+        if (deploySwaggerUI) 
         {
             // Weakened security headers for Swagger UI
             if (ctx.HttpContext.Request.Path.StartsWithSegments("/swagger"))
-            {
+            {               
                 return SecurityHeadersDefinitionsSwagger.GetHeaderPolicyCollection(isDev);
             }
 
@@ -41,7 +43,7 @@ builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.Authority = "https://localhost:5016/";
-        options.Audience = "rs_myccscope";
+        options.Audience = "rs_myscope";
     });
 
 builder.Services.AddOpenApi(options =>
@@ -60,6 +62,8 @@ builder.Services.AddOpenApi(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseSecurityHeaders();
 

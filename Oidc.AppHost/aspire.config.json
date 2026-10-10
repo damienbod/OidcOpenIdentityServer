@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "Oidc.AppHost.csproj"
+  }
+}

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Oidc.AppHost/Oidc.AppHost.csproj" />
+  <Project Path="Oidc.ServiceDefaults/Oidc.ServiceDefaults.csproj" />
+  <Project Path="UI/Ui.csproj" />
+  <Project Path="WebApi/WebApi.csproj" />
+</Solution>
