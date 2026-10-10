@@ -1,11 +1,11 @@
+using Ui;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using NetEscapades.AspNetCore.SecurityHeaders.Infrastructure;
-using Ui;
-
+using Duende.AccessTokenManagement.OpenIdConnect;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(options =>
@@ -34,6 +34,17 @@ builder.Services.AddAuthentication(options =>
     options.GetClaimsFromUserInfoEndpoint = true;
 });
 
+var profileApiBaseUrl = builder.Configuration["AuthConfigurations:ProtectedApiUrl"];
+
+builder.Services.AddOpenIdConnectAccessTokenManagement();
+
+// If you want to use named clients
+builder.Services.AddUserAccessTokenHttpClient("profileClient",
+    configureClient: client =>
+    {
+        client.BaseAddress = new Uri(profileApiBaseUrl!);
+    });
+
 var requireAuthPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
@@ -41,11 +52,9 @@ var requireAuthPolicy = new AuthorizationPolicyBuilder()
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(requireAuthPolicy);
 
-builder.Services.AddSingleton<ApplicationAccessTokenCache>();
-builder.Services.AddScoped<ApplicationUsersService>();
+builder.Services.AddScoped<PhotoService>();
 builder.Services.AddHttpClient();
-
-builder.Services.AddDistributedMemoryCache();
+builder.Services.Configure<AuthConfigurations>(builder.Configuration.GetSection("AuthConfigurations"));
 
 builder.Services.AddRazorPages();
 
