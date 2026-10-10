@@ -37,7 +37,6 @@ public static class Config
         var rsa256OidcPublicPem = configuration.GetValue<string>(Consts.Rsa256OidcPublicPem);
         var rsaCertificate = X509Certificate2.CreateFromPem(rsa256OidcPublicPem);
         var webOidcClientId = configuration.GetValue<string>(Consts.WebOidcClientId);
-       
 
         // interactive client using code flow + pkce + par 
         return [

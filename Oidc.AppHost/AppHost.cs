@@ -60,11 +60,14 @@ migrationServiceIdp = builder.AddProject<Projects.Idp_Domain_Migrations>("migrat
 
 // OIDC web endpoints
 var webOidcAuthority = builder.AddParameter("WebOidcAuthority");
+var uiUrl = builder.AddParameter("UiUrl");
 
 idp = builder.AddProject<Projects.Idp>(IDENTITY_PROVIDER)
     .WithExternalHttpEndpoints()
     .WithReference(databaseIdp)
     .WaitForCompletion(migrationServiceIdp)
+    .WithEnvironment("WebOidcAuthority", webOidcAuthority)
+    .WithEnvironment("UiUrl", uiUrl)
     .WithEnvironment("WebOidcAuthority", webOidcAuthority)
     .WithEnvironment("WebOidcClientId", webOidcClientId)
     .WithEnvironment("Rsa256OidcPublicPem", rsa256OidcPublicPem)
