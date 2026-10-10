@@ -8,6 +8,8 @@ using NetEscapades.AspNetCore.SecurityHeaders.Infrastructure;
 using Duende.AccessTokenManagement.OpenIdConnect;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -67,6 +69,8 @@ builder.Services.AddSecurityHeaderPolicies()
     });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 //IdentityModelEventSource.ShowPII = true;
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
