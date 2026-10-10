@@ -1,6 +1,3 @@
-// Copyright (c) Duende Software. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using System.Security.Cryptography.X509Certificates;
@@ -33,7 +30,7 @@ public static class Config
 
     public static IEnumerable<Client> Clients(IWebHostEnvironment environment, IConfiguration configuration)
     {
-        var organisationMgmtUrl = configuration.GetValue<string>(Consts.OrganisationMgmtUrl);
+        var uiUrl = configuration.GetValue<string>("UiUrl");
         var rsa256OidcPublicPem = configuration.GetValue<string>(Consts.Rsa256OidcPublicPem);
         var rsaCertificate = X509Certificate2.CreateFromPem(rsa256OidcPublicPem);
         var webOidcClientId = configuration.GetValue<string>(Consts.WebOidcClientId);
@@ -59,9 +56,9 @@ public static class Config
                 AllowedGrantTypes = GrantTypes.Code,
                 AlwaysIncludeUserClaimsInIdToken = true,
 
-                RedirectUris = { $"{organisationMgmtUrl}/signin-oidc" },
-                FrontChannelLogoutUri = $"{organisationMgmtUrl}/signout-oidc",
-                PostLogoutRedirectUris = { $"{organisationMgmtUrl}/signout-callback-oidc" },
+                RedirectUris = { $"{uiUrl}/signin-oidc" },
+                FrontChannelLogoutUri = $"{uiUrl}/signout-oidc",
+                PostLogoutRedirectUris = { $"{uiUrl}/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "offline_access" }
