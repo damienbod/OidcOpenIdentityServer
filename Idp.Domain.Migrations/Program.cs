@@ -3,7 +3,7 @@ using Idp.Domain.Migrations;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddApplicationDbContext("db-idp-org-mgmt");
+builder.AddApplicationDbContext("db-idp");
 
 builder.Services.AddHostedService<Worker>();
 

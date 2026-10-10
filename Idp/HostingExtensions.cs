@@ -85,7 +85,7 @@ internal static class HostingExtensions
 
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("db-idp-org-mgmt")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("db-idp")));
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
