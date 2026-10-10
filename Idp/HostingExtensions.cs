@@ -1,0 +1,170 @@
+// Copyright (c) Duende Software. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using Duende.IdentityServer.ResponseHandling;
+using Idp.Domain;
+using Idp.Domain.Models;
+using Idp.Passkeys;
+using Idp.Services;
+using Idp.SwiyuServices;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Filters;
+using System.Globalization;
+using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+
+namespace Idp;
+
+internal static class HostingExtensions
+{
+    public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder builder)
+    {
+        // Write most logs to the console but diagnostic data to a file.
+        // See https://docs.duendesoftware.com/identityserver/diagnostics/data
+        builder.Host.UseSerilog((ctx, lc) =>
+        {
+            lc.WriteTo.Logger(consoleLogger =>
+            {
+                consoleLogger.WriteTo.Console(
+                    outputTemplate:
+                    "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                    formatProvider: CultureInfo.InvariantCulture);
+                if (builder.Environment.IsDevelopment())
+                {
+                    consoleLogger.Filter.ByExcluding(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                }
+            });
+            if (builder.Environment.IsDevelopment())
+            {
+                lc.WriteTo.Logger(fileLogger =>
+                {
+                    fileLogger
+                        .WriteTo.File("./diagnostics/diagnostic.log", rollingInterval: RollingInterval.Day,
+                            fileSizeLimitBytes: 1024 * 1024 * 10, // 10 MB
+                            rollOnFileSizeLimit: true,
+                            outputTemplate:
+                            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                            formatProvider: CultureInfo.InvariantCulture)
+                        .Filter
+                        .ByIncludingOnly(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                }).Enrich.FromLogContext().ReadFrom.Configuration(ctx.Configuration);
+            }
+        });
+
+        return builder;
+    }
+
+    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    {
+        var stsSigningPrivatePem = builder.Configuration.GetValue<string>("StsSigningPrivatePem");
+        var stsSigningPublicPem = builder.Configuration.GetValue<string>("StsSigningPublicPem");
+
+        var ecdsaCertificate = X509Certificate2.CreateFromPem(stsSigningPublicPem, stsSigningPrivatePem);
+        var ecdsaCertificateKey = new ECDsaSecurityKey(ecdsaCertificate.GetECDsaPrivateKey());
+
+        builder.Services.AddScoped<VerificationService>();
+
+        builder.Services.AddHttpClient();
+        builder.Services.AddOptions();
+        builder.Services.AddRazorPages();
+
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+        builder.Services.AddHttpClient(Consts.EmailMailomat, client =>
+        {
+            client.BaseAddress = new Uri("https://api.mailomat.swiss/");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                $"{builder.Configuration["MailomatApiKey"]}");
+        });
+
+
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("db-idp-org-mgmt")));
+
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+        var url = new Uri(builder.Configuration["WebOidcAuthority"]!);
+
+        builder.Services.Configure<IdentityPasskeyOptions>(options =>
+        {
+            options.ValidateOrigin = async (context) =>
+            {
+                if (context.Origin == url.OriginalString)
+                {
+                    return true;
+                }
+
+                return false;
+            };
+        });
+
+        builder.Services.AddTransient<IAuthorizeInteractionResponseGenerator, StepUpInteractionResponseGenerator>();
+
+        var idsvrBuilder = builder.Services
+            .AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
+                options.KeyManagement.Enabled = false;
+                // Use a large chunk size for diagnostic data in development where it will be redirected to a local file.
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.Diagnostics.ChunkSize = 1024 * 1024 * 10; // 10 MB
+                }
+            })
+            .AddSigningCredential(ecdsaCertificateKey, "ES384") // ecdsaCertificate
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryClients(Config.Clients(builder.Environment, builder.Configuration))
+            .AddInMemoryApiResources(Config.GetApiResources())
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddLicenseSummary()
+            .AddProfileService<ProfileService>();
+
+        idsvrBuilder.AddJwtBearerClientAuthentication();
+
+        builder.Services.AddHealthChecks();
+
+        return builder.Build();
+    }
+
+    public static WebApplication ConfigurePipeline(this WebApplication app)
+    {
+        IdentityModelEventSource.ShowPII = true;
+        IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+
+        app.UseSerilogRequestLogging();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseIdentityServer();
+        app.UseAuthorization();
+
+        app.MapPasskeyEndpoints();
+
+        app.MapRazorPages()
+            .RequireAuthorization();
+
+        app.MapHealthChecks("/healthcheck").AllowAnonymous();
+        return app;
+    }
+}

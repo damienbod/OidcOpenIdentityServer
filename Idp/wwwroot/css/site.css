@@ -1,0 +1,594 @@
+:root {
+    /* Blue palette */
+    --blue-950: #0A1628;
+    --blue-900: #0D1F3C;
+    --blue-800: #1A3A5C;
+    --blue-700: #1565C0;
+    --blue-600: #1976D2;
+    --blue-500: #1E88E5;
+    --blue-400: #42A5F5;
+    --blue-300: #90CAF9;
+    --blue-200: #BBDEFB;
+    --blue-100: #E3F2FD;
+    --blue-50:  #F0F8FF;
+    /* Legacy red aliases kept for any page-specific styles that still reference them */
+    --red-900: #4A0E1B;
+    --red-800: #5C0A1A;
+    --red-700: #7B1A2C;
+    --red-600: #A31D3C;
+    --red-500: #C62828;
+    --red-400: #E53935;
+    --red-300: #EF5350;
+    --red-200: #FFCDD2;
+    --red-100: #FFEBEE;
+    --red-50: #FFF5F5;
+    --text-on-dark: #FFFFFF;
+    --text-muted-on-dark: #BBDEFB;
+    --white: #FFFFFF;
+    /* Sidebar sizing */
+    --sidebar-width: 230px;
+    --sidebar-width-collapsed: 170px;
+    --sidebar-transition: width 0.25s ease;
+}
+
+html, body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--white);
+    color: var(--red-900);
+}
+
+a, .btn-link {
+    color: var(--blue-600);
+}
+
+.display-none {
+    display: none !important;
+}
+
+.display-inline-block {
+    display: inline-block !important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: var(--blue-600);
+    border-color: var(--blue-700);
+}
+
+.btn-primary:hover {
+    background-color: var(--blue-700);
+    border-color: var(--blue-800);
+}
+
+/* ── Layout ── */
+
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    background-color: var(--white);
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, var(--blue-950) 0%, var(--blue-800) 100%);
+    border-right: 1px solid var(--blue-800);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: var(--sidebar-transition);
+}
+
+.top-row {
+    background-color: var(--blue-700);
+    border-bottom: 1px solid var(--blue-800);
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.top-row-username {
+    color: var(--text-on-dark);
+    font-weight: 500;
+}
+
+.top-row-link {
+    color: var(--text-on-dark);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.top-row-link:hover {
+    text-decoration: underline;
+    color: var(--blue-200);
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+/* ── Sidebar nav ── */
+
+.sidebar-top-row {
+    min-height: 3.5rem;
+    background-color: var(--blue-950);
+    border-bottom: 1px solid var(--blue-800);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    overflow: hidden;
+}
+
+.navbar-brand {
+    color: var(--text-on-dark);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.navbar-brand:hover {
+    color: var(--blue-200);
+}
+
+.brand-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.brand-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, max-width 0.25s ease;
+    max-width: 160px;
+}
+
+/* ── Sidebar toggle button ── */
+
+.sidebar-toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: var(--text-on-dark);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover,
+.sidebar-toggle-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.2);
+    outline: 2px solid var(--blue-300);
+    outline-offset: 1px;
+}
+
+.sidebar-toggle-btn .glyphicon {
+    font-size: 0.85rem;
+}
+
+.navbar-toggler {
+    appearance: none;
+    cursor: pointer;
+    width: 3.5rem;
+    height: 2.5rem;
+    color: white;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") no-repeat center/1.75rem rgba(255, 255, 255, 0.08);
+    transition: background-color 0.2s ease;
+}
+
+.navbar-toggler:checked {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-scrollable {
+    display: none;
+}
+
+.navbar-toggler:checked ~ .nav-scrollable {
+    display: block;
+}
+
+/* ── Nav items ── */
+
+.nav-item {
+    font-size: 0.875rem;
+    padding-bottom: 0.1rem;
+}
+
+.nav-item:first-of-type {
+    padding-top: 0.5rem;
+}
+
+.nav-item:last-of-type {
+    padding-bottom: 0.5rem;
+}
+
+.nav-item .nav-link {
+    color: var(--text-muted-on-dark);
+    background: none;
+    border: none;
+    border-radius: 4px;
+    height: 2.4rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.nav-item .nav-link:hover {
+    background-color: var(--blue-700);
+    color: var(--text-on-dark);
+}
+
+.nav-item .nav-link.active {
+    background-color: var(--blue-600);
+    color: var(--text-on-dark);
+    border-left: 3px solid var(--blue-300);
+}
+
+.nav-icon {
+    font-size: 0.95rem;
+    width: 1.25rem;
+    text-align: center;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
+.nav-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, max-width 0.25s ease;
+    max-width: 160px;
+}
+
+@media (max-width: 640.98px) {
+    .top-row {
+        justify-content: space-between;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow: hidden;
+    }
+
+    .top-row {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row,
+    article {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .navbar-toggler {
+        display: none;
+    }
+
+    .nav-scrollable {
+        display: block;
+        height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidebar-toggle-btn {
+        display: flex;
+    }
+
+    /* ── Collapsed sidebar ── */
+
+    .sidebar-collapsed .sidebar {
+        width: var(--sidebar-width-collapsed);
+    }
+}
+
+/* ── Page-specific styles ── */
+
+.welcome-page .logo {
+    width: 64px;
+}
+
+.icon-banner {
+    width: 32px;
+}
+
+.body-container {
+    padding-bottom: 40px;
+}
+
+.welcome-page li {
+    list-style: none;
+    padding: 4px;
+}
+
+.logged-out-page iframe {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.grants-page .card {
+    margin-top: 20px;
+    border-bottom: 1px solid lightgray;
+}
+
+.grants-page .card .card-title {
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.grants-page .card .card-title img {
+    width: 100px;
+    height: 100px;
+}
+
+.grants-page .card label {
+    font-weight: bold;
+}
+
+/* ── swiyu page styles ── */
+
+.bg-primary-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.swiyu-page .card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.swiyu-page .card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: none;
+}
+
+.swiyu-page .card-header h4 {
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+
+.swiyu-page .card-body {
+  padding: 1.5rem;
+}
+
+.swiyu-page .card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+}
+
+.swiyu-register-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+  flex-wrap: wrap;
+}
+
+.swiyu-register-hint .btn-link {
+  font-weight: 600;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+.swiyu-qr-card .card-body {
+  padding: 2rem 1.5rem;
+}
+
+.swiyu-qr-card .card-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.25rem;
+}
+
+.swiyu-qr-wrapper {
+  background-color: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.swiyu-qr-wrapper img {
+  display: block;
+  max-width: 260px;
+}
+
+.swiyu-deeplink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #0d6efd;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .swiyu-deeplink:hover {
+        background-color: #e8f0fe;
+        color: #0b5ed7;
+        text-decoration: none;
+        /* ── swiyu page styles ── */
+
+        .bg-primary-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .swiyu-page .card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .swiyu-page .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+
+            .swiyu-page .card-header h4 {
+                font-weight: 600;
+                font-size: 1.15rem;
+                letter-spacing: 0.01em;
+            }
+
+        .swiyu-page .card-body {
+            padding: 1.5rem;
+        }
+
+        .swiyu-page .card-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+
+        .swiyu-register-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: #555;
+            flex-wrap: wrap;
+        }
+
+            .swiyu-register-hint .btn-link {
+                font-weight: 600;
+                padding: 0;
+                vertical-align: baseline;
+            }
+
+        .swiyu-qr-card .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .swiyu-qr-card .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.25rem;
+        }
+
+        .swiyu-qr-wrapper {
+            background-color: #ffffff;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+            .swiyu-qr-wrapper img {
+                display: block;
+                max-width: 260px;
+            }
+
+        .swiyu-deeplink {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #0d6efd;
+            text-decoration: none;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+    .swiyu-deeplink:hover {
+        background-color: #e8f0fe;
+        color: #0b5ed7;
+        text-decoration: none;
+    }
+
+    .swiyu-deeplink::before {
+        content: "🔗";
+        font-size: 1rem;
+    }
+}
+
+
+.nav-item-white .nav-link-white {
+    background: none;
+    border: none;
+    border-radius: 4px;
+    height: 2.4rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-left: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-item-white {
+    font-size: 0.875rem;
+    padding-bottom: 0.1rem;
+}
+
+.nav-item-white:first-of-type {
+    padding-top: 0.5rem;
+}
+
+.nav-item-white:last-of-type {
+    padding-bottom: 0.5rem;
+}
+
+.nav-item-white .nav-link-white:hover {
+    background-color: var(--blue-700);
+    color: var(--text-on-dark);
+}
+
+.nav-item-white .nav-link-white.active {
+    background-color: var(--blue-600);
+    color: var(--text-on-dark);
+    border-left: 3px solid var(--blue-300);
+}

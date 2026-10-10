@@ -1,0 +1,91 @@
+@using Duende.IdentityServer.Extensions
+@{
+#nullable enable
+    string? name = null;
+    if (!true.Equals(ViewData["signed-out"]))
+    {
+        name = Context.User?.GetDisplayName();
+    }
+}
+
+<div class="sidebar-top-row">
+    <a class="navbar-brand" href="~/">
+        <img src="~/damienbod-icon.png" class="brand-icon" alt="damienbod" />
+        <span class="brand-label">IDP IAM</span>
+    </a>
+    <button id="sidebar-toggle"
+            class="sidebar-toggle-btn"
+            type="button"
+            aria-controls="nav-menu"
+            aria-expanded="true"
+            aria-label="Toggle navigation sidebar">
+        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+    </button>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" aria-label="Open navigation menu" />
+
+<div class="nav-scrollable" id="nav-menu">
+    <nav class="flex-column" role="navigation" aria-label="Main navigation">
+        <div class="nav-item">
+            <a class="nav-link" href="~/">
+                <span class="glyphicon glyphicon-home nav-icon" aria-hidden="true"></span>
+                <span class="nav-label">Home</span>
+            </a>
+        </div>
+
+        @if (name != null)
+        {
+            <div class="nav-item">
+                <a class="nav-link" href="~/grants">
+                    <span class="glyphicon glyphicon-th-list nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Grants</span>
+                </a>
+            </div>
+
+            @*  // hide, only available in debug
+            <div class="nav-item">
+                <a class="nav-link" href="~/diagnostics">
+                    <span class="glyphicon glyphicon-cog nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Diagnostics</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a class="nav-link" href="~/serversidesessions">
+                    <span class="glyphicon glyphicon-list nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Sessions</span>
+                </a>
+            </div>
+            *@
+
+            <div class="nav-item">
+                <a class="nav-link" href="~/Account/Manage">
+                    <span class="glyphicon glyphicon-user nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Account</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a class="nav-link" href="~/account/passkeys">
+                    <span class="glyphicon glyphicon-lock nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Passkeys</span>
+                </a>
+            </div>
+
+@*             <div class="nav-item">
+                <a class="nav-link" href="~/Swiyu/Register">
+                    <span class="glyphicon glyphicon-qrcode nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Swiyu</span>
+                </a>
+            </div> *@
+
+            <div class="nav-item">
+                <a class="nav-link" asp-page="/Account/Logout/Index">
+                    <span class="glyphicon glyphicon-log-out nav-icon" aria-hidden="true"></span>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </div>
+        }
+    </nav>
+</div>
