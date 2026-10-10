@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,7 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Idp.Domain.Migrations\Idp.Domain.Migrations.csproj" />
     <ProjectReference Include="..\Idp\Idp.csproj" />
-    <ProjectReference Include="..\Oidc.ServiceDefaults\Oidc.ServiceDefaults.csproj" />
     <ProjectReference Include="..\UI\Ui.csproj" />
     <ProjectReference Include="..\WebApi\WebApi.csproj" />
   </ItemGroup>

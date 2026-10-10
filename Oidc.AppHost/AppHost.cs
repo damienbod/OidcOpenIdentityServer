@@ -22,9 +22,6 @@ var webOidcClientId = builder.AddParameter("WebOidcClientId");
 var stsSigningPrivatePem = builder.AddParameter("StsSigningPrivatePem", secret: true);
 var stsSigningPublicPem = builder.AddParameter("StsSigningPublicPem");
 
-var orgTokenPrivatePem = builder.AddParameter("OrganisationTokenPrivatePem", secret: true);
-var orgTokenPublicPem = builder.AddParameter("OrganisationTokenPublicPem");
-
 var env = builder.AddAzureContainerAppEnvironment("env");
 
 var sqlServer = builder.AddAzureSqlServer("sqlserver")
