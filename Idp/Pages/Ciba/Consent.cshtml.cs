@@ -1,11 +1,11 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Extensions;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Validation;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Extensions;
+using Open.IdentityServer.Models;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -85,7 +85,7 @@ public class Consent : PageModel
                 if (ConsentOptions.EnableOfflineAccess == false)
                 {
                     scopes = scopes.Where(x =>
-                        x != Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess);
+                        x != Open.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess);
                 }
 
                 result = new CompleteBackchannelLoginRequest(Input.Id)
@@ -186,7 +186,7 @@ public class Consent : PageModel
         if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
         {
             apiScopes.Add(GetOfflineAccessScope(Input == null ||
-                                                Input.ScopesConsented.Contains(Duende.IdentityServer
+                                                Input.ScopesConsented.Contains(Open.IdentityServer
                                                     .IdentityServerConstants.StandardScopes.OfflineAccess)));
         }
 
@@ -228,7 +228,7 @@ public class Consent : PageModel
 
     private static ScopeViewModel GetOfflineAccessScope(bool check) => new ScopeViewModel
     {
-        Value = Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
+        Value = Open.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
         DisplayName = ConsentOptions.OfflineAccessDisplayName,
         Description = ConsentOptions.OfflineAccessDescription,
         Emphasize = true,

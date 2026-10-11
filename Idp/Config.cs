@@ -1,5 +1,5 @@
-using Duende.IdentityServer;
-using Duende.IdentityServer.Models;
+using Open.IdentityServer;
+using Open.IdentityServer.Models;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Idp;

@@ -1,7 +1,7 @@
 using Duende.IdentityModel;
-using Duende.IdentityServer.Extensions;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
+using Open.IdentityServer.Extensions;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Stores;
 using Idp.Domain;
 using Idp.Domain.Models;
 using Idp.SwiyuServices;

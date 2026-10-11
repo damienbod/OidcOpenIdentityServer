@@ -1,7 +1,7 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.ResponseHandling;
+using Open.IdentityServer.ResponseHandling;
 using Idp.Domain;
 using Idp.Domain.Models;
 using Idp.Passkeys;
@@ -36,7 +36,7 @@ internal static class HostingExtensions
                     formatProvider: CultureInfo.InvariantCulture);
                 if (builder.Environment.IsDevelopment())
                 {
-                    consoleLogger.Filter.ByExcluding(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                    consoleLogger.Filter.ByExcluding(Matching.FromSource("Open.IdentityServer.Diagnostics.Summary"));
                 }
             });
             if (builder.Environment.IsDevelopment())
@@ -51,7 +51,7 @@ internal static class HostingExtensions
                             "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
                             formatProvider: CultureInfo.InvariantCulture)
                         .Filter
-                        .ByIncludingOnly(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                        .ByIncludingOnly(Matching.FromSource("Open.IdentityServer.Diagnostics.Summary"));
                 }).Enrich.FromLogContext().ReadFrom.Configuration(ctx.Configuration);
             }
         });

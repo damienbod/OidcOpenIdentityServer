@@ -1,9 +1,9 @@
 ﻿using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Configuration;
-using Duende.IdentityServer.ResponseHandling;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Validation;
+using Open.IdentityServer;
+using Open.IdentityServer.Configuration;
+using Open.IdentityServer.ResponseHandling;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Validation;
 using System.Security.Claims;
 
 namespace Idp;
