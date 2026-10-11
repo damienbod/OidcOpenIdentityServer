@@ -43,15 +43,10 @@ public class ProfileService : IProfileService
         return Task.CompletedTask;
     }
 
-    public Task IsActiveAsync(IsActiveContext context, CancellationToken ct)
+    public Task IsActiveAsync(IsActiveContext context)
     {
         context.IsActive = true;
         return Task.CompletedTask;
-    }
-
-    public Task IsActiveAsync(IsActiveContext context)
-    {
-        throw new NotImplementedException();
     }
 
     private void AddCustomClaims(ProfileDataRequestContext context)
