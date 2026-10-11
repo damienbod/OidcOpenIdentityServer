@@ -1,4 +1,4 @@
-# OIDC using Open.IdentityServer
+# OpenID conect using Open.IdentityServer
 
 ## links
 
