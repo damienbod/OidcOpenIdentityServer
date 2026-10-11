@@ -1,4 +1,3 @@
-using Duende.IdentityModel;
 using Open.IdentityServer;
 using Open.IdentityServer.Models;
 using Open.IdentityServer.Services;
@@ -15,7 +14,7 @@ public class ProfileService : IProfileService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Task GetProfileDataAsync(ProfileDataRequestContext context, CancellationToken ct)
+    public Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         // context.Subject is the user for whom the result is being made
         // context.Subject.Claims is the claims collection from the user's session cookie at login time
@@ -48,6 +47,11 @@ public class ProfileService : IProfileService
     {
         context.IsActive = true;
         return Task.CompletedTask;
+    }
+
+    public Task IsActiveAsync(IsActiveContext context)
+    {
+        throw new NotImplementedException();
     }
 
     private void AddCustomClaims(ProfileDataRequestContext context)

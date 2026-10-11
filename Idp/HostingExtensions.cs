@@ -6,7 +6,6 @@ using Idp.Domain;
 using Idp.Domain.Models;
 using Idp.Passkeys;
 using Idp.Services;
-using Idp.SwiyuServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -67,8 +66,6 @@ internal static class HostingExtensions
         var ecdsaCertificate = X509Certificate2.CreateFromPem(stsSigningPublicPem, stsSigningPrivatePem);
         var ecdsaCertificateKey = new ECDsaSecurityKey(ecdsaCertificate.GetECDsaPrivateKey());
 
-        builder.Services.AddScoped<VerificationService>();
-
         builder.Services.AddHttpClient();
         builder.Services.AddOptions();
         builder.Services.AddRazorPages();
@@ -118,13 +115,6 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
-                options.KeyManagement.Enabled = false;
-                // Use a large chunk size for diagnostic data in development where it will be redirected to a local file.
-                if (builder.Environment.IsDevelopment())
-                {
-                    options.Diagnostics.ChunkSize = 1024 * 1024 * 10; // 10 MB
-                }
             })
             .AddSigningCredential(ecdsaCertificateKey, "ES384") // ecdsaCertificate
             .AddInMemoryIdentityResources(Config.IdentityResources)
@@ -132,7 +122,6 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients(builder.Environment, builder.Configuration))
             .AddInMemoryApiResources(Config.GetApiResources())
             .AddAspNetIdentity<ApplicationUser>()
-            .AddLicenseSummary()
             .AddProfileService<ProfileService>();
 
         idsvrBuilder.AddJwtBearerClientAuthentication();
