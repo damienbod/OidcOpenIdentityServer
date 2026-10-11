@@ -42,22 +42,12 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        options.Authority = "https://localhost:5011/";
-        options.Audience = "rs_myscope";
+        options.Authority = builder.Configuration["WebOidcAuthority"];
+        options.Audience = "scope-api";
     });
 
 builder.Services.AddOpenApi(options =>
 {
-    //options.UseTransformer((document, context, cancellationToken) =>
-    //{
-    //    document.Info = new()
-    //    {
-    //        Title = "My API",
-    //        Version = "v1",
-    //        Description = "API for Damien"
-    //    };
-    //    return Task.CompletedTask;
-    //});
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
