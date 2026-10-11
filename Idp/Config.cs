@@ -13,18 +13,18 @@ public static class Config
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        [
-            //new ApiScope("scope2")
-        ];
+    [
+        new ApiScope("scope-api")
+    ];
 
     public static IEnumerable<ApiResource> GetApiResources()
     {
         return
         [
-            //new ApiResource("dpop-api", "DPoP API")
-            //{
-            //    Scopes = { "scope2" }
-            //},
+            new ApiResource("api-rs", "Scope for API")
+            {
+                Scopes = { "scope-api" }
+            },
         ];
     }
 
