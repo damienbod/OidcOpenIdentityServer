@@ -61,7 +61,7 @@ public static class Config
                 PostLogoutRedirectUris = { $"{uiUrl}/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "offline_access" }
+                AllowedScopes = { "openid", "profile", "offline_access", "scope-api" }
             }
         ];
     }

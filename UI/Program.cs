@@ -21,7 +21,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Scope.Add("profile");
-    options.Scope.Add("myscope");
+    options.Scope.Add("scope-api");
     options.Scope.Add("offline_access");
 
     options.Authority = builder.Configuration["WebOidcAuthority"];
