@@ -1,6 +1,9 @@
 # OpenID conect using Open.IdentityServer
 
-## links
+## History
+- 2026-10-11 Initial version
+
+## Links
 
 https://docs.identityserver.com/openidentityserver/migrating/from_duende
 
