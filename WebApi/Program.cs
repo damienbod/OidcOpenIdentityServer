@@ -42,7 +42,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        options.Authority = "https://localhost:5016/";
+        options.Authority = "https://localhost:5011/";
         options.Audience = "rs_myscope";
     });
 

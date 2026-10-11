@@ -1,11 +1,12 @@
-using Ui;
+using Duende.AccessTokenManagement;
+using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using NetEscapades.AspNetCore.SecurityHeaders.Infrastructure;
-using Duende.AccessTokenManagement.OpenIdConnect;
+using Ui;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -23,10 +24,10 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("myscope");
     options.Scope.Add("offline_access");
 
-    var oidcConfig = builder.Configuration.GetSection("OpenIDConnectSettings");
-    options.Authority = oidcConfig["Authority"];
-    options.ClientId = oidcConfig["ClientId"];
-    options.ClientSecret = oidcConfig["ClientSecret"];
+    options.Authority = builder.Configuration["WebOidcAuthority"];
+    options.ClientId = builder.Configuration["WebOidcClientId"];
+    options.ClientSecret = builder.Configuration["WebOidcClientSecret"];
+
     options.ResponseType = OpenIdConnectResponseType.Code;
     options.MapInboundClaims = false;
     options.TokenValidationParameters.NameClaimType = "name";
@@ -36,15 +37,14 @@ builder.Services.AddAuthentication(options =>
     options.GetClaimsFromUserInfoEndpoint = true;
 });
 
-var profileApiBaseUrl = builder.Configuration["AuthConfigurations:ProtectedApiUrl"];
-
 builder.Services.AddOpenIdConnectAccessTokenManagement();
 
 // If you want to use named clients
 builder.Services.AddUserAccessTokenHttpClient("profileClient",
     configureClient: client =>
     {
-        client.BaseAddress = new Uri(profileApiBaseUrl!);
+        // Aspire configuration, see AppHost
+        client.BaseAddress = new("https+http://api-service");
     });
 
 var requireAuthPolicy = new AuthorizationPolicyBuilder()
@@ -56,7 +56,6 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddScoped<PhotoService>();
 builder.Services.AddHttpClient();
-builder.Services.Configure<AuthConfigurations>(builder.Configuration.GetSection("AuthConfigurations"));
 
 builder.Services.AddRazorPages();
 
@@ -65,7 +64,7 @@ builder.Services.AddSecurityHeaderPolicies()
     {
         return SecurityHeadersDefinitions.GetHeaderPolicyCollection(
             builder.Environment.IsDevelopment(),
-            builder.Configuration["OpenIDConnectSettings:Authority"]);
+            builder.Configuration["WebOidcAuthority"]);
     });
 
 var app = builder.Build();

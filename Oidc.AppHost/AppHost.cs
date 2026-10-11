@@ -3,6 +3,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 const string IDENTITY_PROVIDER = "idp";
 
 IResourceBuilder<ProjectResource>? idp = null;
+IResourceBuilder<ProjectResource>? ui = null;
+IResourceBuilder<ProjectResource>? api = null;
 IResourceBuilder<ProjectResource>? migrationServiceIdp = null;
 
 // To add
@@ -18,6 +20,7 @@ IResourceBuilder<ProjectResource>? migrationServiceIdp = null;
 var rsa256OidcPrivatePem = builder.AddParameter("Rsa256OidcPrivatePem", secret: true);
 var rsa256OidcPublicPem = builder.AddParameter("Rsa256OidcPublicPem");
 var webOidcClientId = builder.AddParameter("WebOidcClientId");
+var webOidcClientSecret = builder.AddParameter("WebOidcClientSecret", secret: true);
 
 var stsSigningPrivatePem = builder.AddParameter("StsSigningPrivatePem", secret: true);
 var stsSigningPublicPem = builder.AddParameter("StsSigningPublicPem");
@@ -83,10 +86,23 @@ if (builder.ExecutionContext.IsRunMode)
     });
 }
 
-builder.AddProject<Projects.Ui>("ui")
+api = builder.AddProject<Projects.WebApi>("api-service")
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("WebOidcAuthority", webOidcAuthority)
+    .WithHttpHealthCheck("/health")
     .WaitFor(idp);
 
-builder.AddProject<Projects.WebApi>("webapi")
+ui = builder.AddProject<Projects.Ui>("ui")
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("WebOidcClientId", webOidcClientId)
+    .WithEnvironment("WebOidcAuthority", webOidcAuthority)
+    .WithEnvironment("WebOidcClientSecret", webOidcClientSecret)
+    .WithEnvironment("Rsa256OidcPrivatePem", rsa256OidcPrivatePem)
+    .WithEnvironment("Rsa256OidcPublicPem", rsa256OidcPublicPem)
+    .WithHttpHealthCheck("/health")
+    .WithReference(api)
     .WaitFor(idp);
+
+
 
 builder.Build().Run();
