@@ -1,4 +1,4 @@
-# OpenID conect using Open.IdentityServer
+# OpenID Connect using Open.IdentityServer
 
 ## History
 - 2026-10-11 Initial version
