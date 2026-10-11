@@ -35,7 +35,7 @@ public static class Config
         var rsaCertificate = X509Certificate2.CreateFromPem(rsa256OidcPublicPem);
         var webOidcClientId = configuration.GetValue<string>(Consts.WebOidcClientId);
 
-        // interactive client using code flow + pkce + par 
+        // interactive client using code flow + pkce 
         return [
             new Client
             {
@@ -51,7 +51,7 @@ public static class Config
                         }
                 },
                 //RequireDPoP = true,
-                RequirePushedAuthorization = true,
+                //RequirePushedAuthorization = true,
 
                 AllowedGrantTypes = GrantTypes.Code,
                 AlwaysIncludeUserClaimsInIdToken = true,
