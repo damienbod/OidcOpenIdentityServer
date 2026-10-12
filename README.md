@@ -1,5 +1,9 @@
 # OpenID Connect using Open.IdentityServer
 
+## Setup
+
+![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.drawio.png)
+
 ## History
 - 2026-10-11 Initial version
 
