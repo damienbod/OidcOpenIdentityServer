@@ -43,7 +43,7 @@ builder.Services.AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.Authority = builder.Configuration["WebOidcAuthority"];
-        options.Audience = "scope-api";
+        options.Audience = "api-rs";
     });
 
 builder.Services.AddOpenApi(options =>
