@@ -16,6 +16,7 @@ using Serilog.Filters;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
+using Oidc.ServiceDefaults;
 
 namespace Idp;
 
@@ -60,8 +61,8 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        var stsSigningPrivatePem = builder.Configuration.GetValue<string>("StsSigningPrivatePem");
-        var stsSigningPublicPem = builder.Configuration.GetValue<string>("StsSigningPublicPem");
+        var stsSigningPrivatePem = ConfigConverter.GetPemFromBase64Config("StsSigningPrivatePemBase64", builder.Configuration);
+        var stsSigningPublicPem = ConfigConverter.GetPemFromBase64Config("StsSigningPublicPemBase64", builder.Configuration);
 
         var ecdsaCertificate = X509Certificate2.CreateFromPem(stsSigningPublicPem, stsSigningPrivatePem);
         var ecdsaCertificateKey = new ECDsaSecurityKey(ecdsaCertificate.GetECDsaPrivateKey());

@@ -1,3 +1,4 @@
+using Oidc.ServiceDefaults;
 using Open.IdentityServer;
 using Open.IdentityServer.Models;
 using System.Security.Cryptography.X509Certificates;
@@ -31,8 +32,10 @@ public static class Config
     public static IEnumerable<Client> Clients(IWebHostEnvironment environment, IConfiguration configuration)
     {
         var uiUrl = configuration.GetValue<string>("UiUrl");
-        var rsa256OidcPublicPem = configuration.GetValue<string>(Consts.Rsa256OidcPublicPem);
-        var rsaCertificate = X509Certificate2.CreateFromPem(rsa256OidcPublicPem);
+
+        var webClientUrl = configuration.GetValue<string>("WebClientUrl");
+        var stsOidcWebClientPublicPem = ConfigConverter.GetPemFromBase64Config("StsOidcWebClientPublicPemBase64", configuration);
+        var rsaCertificate = X509Certificate2.CreateFromPem(stsOidcWebClientPublicPem);
         var webOidcClientId = configuration.GetValue<string>(Consts.WebOidcClientId);
 
         // interactive client using code flow + pkce 
