@@ -58,7 +58,7 @@ builder.Services.AddAuthentication(options =>
     // OAuth PAR not supported
     //options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Require;
 
-    options.Scope.Add("scope2");
+    options.Scope.Add("scope-api");
     options.TokenValidationParameters = new TokenValidationParameters
     {
         NameClaimType = "name"
