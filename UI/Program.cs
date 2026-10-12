@@ -55,7 +55,8 @@ builder.Services.AddAuthentication(options =>
     options.ClaimActions.MapUniqueJsonKey("loi", "loi");
     options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Email, JwtClaimTypes.Email);
 
-    options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Require;
+    // OAuth PAR not supported
+    //options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Require;
 
     options.Scope.Add("scope2");
     options.TokenValidationParameters = new TokenValidationParameters
