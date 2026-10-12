@@ -1,7 +1,6 @@
-using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
+using Open.IdentityServer;
+using Open.IdentityServer.Models;
+using Open.IdentityServer.Services;
 using System.Security.Claims;
 
 namespace Idp;
@@ -15,7 +14,7 @@ public class ProfileService : IProfileService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Task GetProfileDataAsync(ProfileDataRequestContext context, CancellationToken ct)
+    public Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         // context.Subject is the user for whom the result is being made
         // context.Subject.Claims is the claims collection from the user's session cookie at login time
@@ -44,7 +43,7 @@ public class ProfileService : IProfileService
         return Task.CompletedTask;
     }
 
-    public Task IsActiveAsync(IsActiveContext context, CancellationToken ct)
+    public Task IsActiveAsync(IsActiveContext context)
     {
         context.IsActive = true;
         return Task.CompletedTask;

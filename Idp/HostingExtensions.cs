@@ -1,12 +1,11 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.ResponseHandling;
+using Open.IdentityServer.ResponseHandling;
 using Idp.Domain;
 using Idp.Domain.Models;
 using Idp.Passkeys;
 using Idp.Services;
-using Idp.SwiyuServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +16,7 @@ using Serilog.Filters;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
+using Oidc.ServiceDefaults;
 
 namespace Idp;
 
@@ -36,7 +36,7 @@ internal static class HostingExtensions
                     formatProvider: CultureInfo.InvariantCulture);
                 if (builder.Environment.IsDevelopment())
                 {
-                    consoleLogger.Filter.ByExcluding(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                    consoleLogger.Filter.ByExcluding(Matching.FromSource("Open.IdentityServer.Diagnostics.Summary"));
                 }
             });
             if (builder.Environment.IsDevelopment())
@@ -51,7 +51,7 @@ internal static class HostingExtensions
                             "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
                             formatProvider: CultureInfo.InvariantCulture)
                         .Filter
-                        .ByIncludingOnly(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                        .ByIncludingOnly(Matching.FromSource("Open.IdentityServer.Diagnostics.Summary"));
                 }).Enrich.FromLogContext().ReadFrom.Configuration(ctx.Configuration);
             }
         });
@@ -61,13 +61,11 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        var stsSigningPrivatePem = builder.Configuration.GetValue<string>("StsSigningPrivatePem");
-        var stsSigningPublicPem = builder.Configuration.GetValue<string>("StsSigningPublicPem");
+        var stsSigningPrivatePem = ConfigConverter.GetPemFromBase64Config("StsSigningPrivatePemBase64", builder.Configuration);
+        var stsSigningPublicPem = ConfigConverter.GetPemFromBase64Config("StsSigningPublicPemBase64", builder.Configuration);
 
         var ecdsaCertificate = X509Certificate2.CreateFromPem(stsSigningPublicPem, stsSigningPrivatePem);
         var ecdsaCertificateKey = new ECDsaSecurityKey(ecdsaCertificate.GetECDsaPrivateKey());
-
-        builder.Services.AddScoped<VerificationService>();
 
         builder.Services.AddHttpClient();
         builder.Services.AddOptions();
@@ -119,20 +117,14 @@ internal static class HostingExtensions
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
 
-                options.KeyManagement.Enabled = false;
-                // Use a large chunk size for diagnostic data in development where it will be redirected to a local file.
-                if (builder.Environment.IsDevelopment())
-                {
-                    options.Diagnostics.ChunkSize = 1024 * 1024 * 10; // 10 MB
-                }
+                options.EmitStaticAudienceClaim = true;
             })
-            .AddSigningCredential(ecdsaCertificateKey, "ES384") // ecdsaCertificate
+            .AddSigningCredential(ecdsaCertificateKey, "ES256") // ecdsaCertificate
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Environment, builder.Configuration))
             .AddInMemoryApiResources(Config.GetApiResources())
             .AddAspNetIdentity<ApplicationUser>()
-            .AddLicenseSummary()
             .AddProfileService<ProfileService>();
 
         idsvrBuilder.AddJwtBearerClientAuthentication();

@@ -1,12 +1,11 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
+using Open.IdentityServer;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Models;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Stores;
 using Idp.Domain;
 using Idp.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -28,7 +27,6 @@ public class Index : PageModel
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
-    private readonly IIdentityProviderStore _identityProviderStore;
     private readonly ApplicationDbContext _applicationDbContext;
 
     public ViewModel View { get; set; } = default!;
@@ -38,7 +36,6 @@ public class Index : PageModel
     public Index(
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
-        IIdentityProviderStore identityProviderStore,
         IEventService events,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -48,7 +45,6 @@ public class Index : PageModel
         _signInManager = signInManager;
         _interaction = interaction;
         _schemeProvider = schemeProvider;
-        _identityProviderStore = identityProviderStore;
         _events = events;
         _applicationDbContext = applicationDbContext;
     }
@@ -69,7 +65,7 @@ public class Index : PageModel
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl, HttpContext.RequestAborted);
+        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
         var passkeySubmit = Input.Passkey != null && Input.Passkey.CredentialJson != null;
 
@@ -84,7 +80,7 @@ public class Index : PageModel
                 // if the user cancels, send a result back into IdentityServer as if they
                 // denied the consent (even if this client does not require consent).
                 // this will send back an access denied OIDC error response to the client.
-                await _interaction.DenyAuthorizationAsync(context, InteractionError.AccessDenied, HttpContext.RequestAborted);
+                await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
 
                 // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                 if (context.IsNativeClient())
@@ -148,7 +144,7 @@ public class Index : PageModel
 
         if (result?.Succeeded == true && user != null)
         {
-            await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId), HttpContext.RequestAborted);
+            await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
             Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
 
             if (context != null)
@@ -184,7 +180,8 @@ public class Index : PageModel
         }
 
         const string error = "invalid credentials";
-        await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId: context?.Client.ClientId), HttpContext.RequestAborted);
+        await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId: context?.Client.ClientId));
+        
         Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
         ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
 
@@ -236,13 +233,13 @@ public class Index : PageModel
             ReturnUrl = returnUrl
         };
 
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null)
         {
             var scheme = await _schemeProvider.GetSchemeAsync(context.IdP);
             if (scheme != null)
             {
-                var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
+                var local = context.IdP == Open.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
                 View = new ViewModel
@@ -274,16 +271,6 @@ public class Index : PageModel
                 authenticationScheme: x.Name,
                 displayName: x.DisplayName ?? x.Name
             )).ToList();
-
-        var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync(HttpContext.RequestAborted))
-            .Where(x => x.Enabled)
-            .Select(x => new ViewModel.ExternalProvider
-            (
-                authenticationScheme: x.Scheme,
-                displayName: x.DisplayName ?? x.Scheme
-            ));
-        providers.AddRange(dynamicSchemes);
-
 
         var allowLocal = true;
         var client = context?.Client;

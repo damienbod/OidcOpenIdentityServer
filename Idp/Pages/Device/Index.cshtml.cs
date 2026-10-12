@@ -1,12 +1,12 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.Configuration;
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Extensions;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Validation;
+using Open.IdentityServer.Configuration;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Extensions;
+using Open.IdentityServer.Models;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Validation;
 using Idp.Pages.Consent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +61,7 @@ public class Index : PageModel
     public async Task<IActionResult> OnPost()
     {
         var request = await _interaction.GetAuthorizationContextAsync(Input.UserCode ??
-                throw new ArgumentNullException(nameof(Input.UserCode)), HttpContext.RequestAborted);
+                throw new ArgumentNullException(nameof(Input.UserCode)));
 
         if (request == null)
         {
@@ -75,12 +75,12 @@ public class Index : PageModel
         {
             grantedConsent = new ConsentResponse
             {
-                Error = InteractionError.AccessDenied
+                Error = AuthorizationError.AccessDenied
             };
 
             // emit event
             await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId,
-                request.ValidatedResources.RawScopeValues), HttpContext.RequestAborted);
+                request.ValidatedResources.RawScopeValues));
 
             Telemetry.Metrics.ConsentDenied(request.Client.ClientId,
                 request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName));
@@ -95,7 +95,7 @@ public class Index : PageModel
                 if (ConsentOptions.EnableOfflineAccess == false)
                 {
                     scopes = scopes.Where(x =>
-                        x != Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess);
+                        x != Open.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess);
                 }
 
                 grantedConsent = new ConsentResponse
@@ -108,7 +108,7 @@ public class Index : PageModel
                 // emit event
                 await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId,
                     request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented,
-                    grantedConsent.RememberConsent), HttpContext.RequestAborted);
+                    grantedConsent.RememberConsent));
 
                 Telemetry.Metrics.ConsentGranted(request.Client.ClientId, grantedConsent.ScopesValuesConsented,
                     grantedConsent.RememberConsent);
@@ -129,7 +129,7 @@ public class Index : PageModel
         if (grantedConsent != null)
         {
             // communicate outcome of consent back to identityserver
-            await _interaction.HandleRequestAsync(Input.UserCode, grantedConsent, HttpContext.RequestAborted);
+            await _interaction.HandleRequestAsync(Input.UserCode, grantedConsent);
 
             // indicate that's it ok to redirect back to authorization endpoint
             return RedirectToPage("/Device/Success");
@@ -147,7 +147,7 @@ public class Index : PageModel
 
     private async Task<bool> SetViewModelAsync(string userCode)
     {
-        var request = await _interaction.GetAuthorizationContextAsync(userCode, HttpContext.RequestAborted);
+        var request = await _interaction.GetAuthorizationContextAsync(userCode);
         if (request != null)
         {
             View = CreateConsentViewModel(request);
@@ -188,7 +188,7 @@ public class Index : PageModel
         if (DeviceOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
         {
             apiScopes.Add(GetOfflineAccessScope(Input == null ||
-                                                Input.ScopesConsented.Contains(Duende.IdentityServer
+                                                Input.ScopesConsented.Contains(Open.IdentityServer
                                                     .IdentityServerConstants.StandardScopes.OfflineAccess)));
         }
 
@@ -221,7 +221,7 @@ public class Index : PageModel
 
     private static ScopeViewModel GetOfflineAccessScope(bool check) => new ScopeViewModel
     {
-        Value = Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
+        Value = Open.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
         DisplayName = DeviceOptions.OfflineAccessDisplayName,
         Description = DeviceOptions.OfflineAccessDescription,
         Emphasize = true,

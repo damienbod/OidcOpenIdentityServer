@@ -1,5 +1,6 @@
-using Duende.IdentityServer;
-using Duende.IdentityServer.Models;
+using Oidc.ServiceDefaults;
+using Open.IdentityServer;
+using Open.IdentityServer.Models;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Idp;
@@ -13,29 +14,31 @@ public static class Config
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        [
-            //new ApiScope("scope2")
-        ];
+    [
+        new ApiScope("scope-api")
+    ];
 
     public static IEnumerable<ApiResource> GetApiResources()
     {
         return
         [
-            //new ApiResource("dpop-api", "DPoP API")
-            //{
-            //    Scopes = { "scope2" }
-            //},
+            new ApiResource("api-rs", "Scope for API")
+            {
+                Scopes = { "scope-api" }
+            },
         ];
     }
 
     public static IEnumerable<Client> Clients(IWebHostEnvironment environment, IConfiguration configuration)
     {
         var uiUrl = configuration.GetValue<string>("UiUrl");
-        var rsa256OidcPublicPem = configuration.GetValue<string>(Consts.Rsa256OidcPublicPem);
-        var rsaCertificate = X509Certificate2.CreateFromPem(rsa256OidcPublicPem);
+
+        var webClientUrl = configuration.GetValue<string>("WebClientUrl");
+        var stsOidcWebClientPublicPem = ConfigConverter.GetPemFromBase64Config("StsOidcWebClientPublicPemBase64", configuration);
+        var rsaCertificate = X509Certificate2.CreateFromPem(stsOidcWebClientPublicPem);
         var webOidcClientId = configuration.GetValue<string>(Consts.WebOidcClientId);
 
-        // interactive client using code flow + pkce + par 
+        // interactive client using code flow + pkce 
         return [
             new Client
             {
@@ -51,7 +54,7 @@ public static class Config
                         }
                 },
                 //RequireDPoP = true,
-                RequirePushedAuthorization = true,
+                //RequirePushedAuthorization = true,
 
                 AllowedGrantTypes = GrantTypes.Code,
                 AlwaysIncludeUserClaimsInIdToken = true,
@@ -61,7 +64,7 @@ public static class Config
                 PostLogoutRedirectUris = { $"{uiUrl}/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "offline_access" }
+                AllowedScopes = { "openid", "profile", "offline_access", "scope-api" }
             }
         ];
     }

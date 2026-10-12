@@ -1,9 +1,8 @@
-﻿using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Configuration;
-using Duende.IdentityServer.ResponseHandling;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Validation;
+﻿using Open.IdentityServer;
+using Open.IdentityServer.Configuration;
+using Open.IdentityServer.ResponseHandling;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Validation;
 using System.Security.Claims;
 
 namespace Idp;
@@ -15,13 +14,14 @@ public class StepUpInteractionResponseGenerator : AuthorizeInteractionResponseGe
         TimeProvider timeProvider,
         ILogger<AuthorizeInteractionResponseGenerator> logger,
         IConsentService consent,
-        IProfileService profile) : base(options, timeProvider, logger, consent, profile)
+        ITelemetryService telemetry,
+        IProfileService profile) : base(timeProvider, logger, consent, profile, telemetry)
     {
     }
 
-    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request, CancellationToken  ct)
+    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request)
     {
-        var result = await base.ProcessLoginAsync(request, ct);
+        var result = await base.ProcessLoginAsync(request);
 
         if (!result.IsLogin && !result.IsError)
         {

@@ -5,13 +5,13 @@ namespace Ui;
 
 public class PhotoService
 {
-    private readonly IOptions<AuthConfigurations> _authConfigurations;
     private readonly IHttpClientFactory _clientFactory;
+    private readonly IConfiguration _configuration;
 
-    public PhotoService(IOptions<AuthConfigurations> authConfigurations,
+    public PhotoService(IConfiguration configuration,
         IHttpClientFactory clientFactory)
     {
-        _authConfigurations = authConfigurations;
+        _configuration = configuration;
         _clientFactory = clientFactory;
     }
 
@@ -22,8 +22,9 @@ public class PhotoService
     {
         try
         {
-            var client = _clientFactory.CreateClient(); 
-            client.BaseAddress = new Uri(_authConfigurations.Value.ProtectedApiUrl);
+            var client = _clientFactory.CreateClient();
+            // Aspire configuration, see AppHost
+            client.BaseAddress = new("https+http://api-service");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await client.GetAsync("api/Profiles/photo");

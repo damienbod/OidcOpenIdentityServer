@@ -1,6 +1,11 @@
-# OIDC using Open.IdentityServer
+# OpenID Connect using Open.IdentityServer
 
-## links
+## History
+- 2026-10-11 Initial version
+
+## Links
+
+https://docs.identityserver.com/openidentityserver/migrating/from_duende
 
 https://github.com/RockSolidKnowledge/Open.IdentityServer
 

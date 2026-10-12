@@ -1,7 +1,7 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.Models;
+using Open.IdentityServer.Models;
 
 namespace Idp.Pages.Error;
 

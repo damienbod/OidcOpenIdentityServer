@@ -1,10 +1,9 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Services;
+using Open.IdentityServer;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Services;
 using Idp.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -96,10 +95,10 @@ public class Callback : PageModel
         var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
 
         // check if external login is in the context of an OIDC request
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
 
         await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id, user.UserName, true,
-            context?.Client.ClientId), HttpContext.RequestAborted);
+            context?.Client.ClientId));
 
         Telemetry.Metrics.UserLogin(context?.Client.ClientId, provider!);
 

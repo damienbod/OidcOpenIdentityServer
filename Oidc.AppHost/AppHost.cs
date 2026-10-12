@@ -3,24 +3,21 @@ var builder = DistributedApplication.CreateBuilder(args);
 const string IDENTITY_PROVIDER = "idp";
 
 IResourceBuilder<ProjectResource>? idp = null;
+IResourceBuilder<ProjectResource>? ui = null;
+IResourceBuilder<ProjectResource>? api = null;
 IResourceBuilder<ProjectResource>? migrationServiceIdp = null;
 
-// To add
-//var stsOidcWebClientPublicPemBase64 = builder.AddParameter("StsOidcWebClientPublicPemBase64");
-//var webOidcClientPrivatePemBase64 = builder.AddParameter("WebOidcClientPrivatePemBase64", secret: true);
-//var webOidcClientPublicPemBase64 = builder.AddParameter("WebOidcClientPublicPemBase64");
-//var webDpopClientPrivatePemBase64 = builder.AddParameter("WebDpopClientPrivatePemBase64", secret: true);
-//var webDpopClientPublicPemBase64 = builder.AddParameter("WebDpopClientPublicPemBase64");
+var stsOidcWebClientPublicPemBase64 = builder.AddParameter("StsOidcWebClientPublicPemBase64");
+var webOidcClientPrivatePemBase64 = builder.AddParameter("WebOidcClientPrivatePemBase64", secret: true);
+var webOidcClientPublicPemBase64 = builder.AddParameter("WebOidcClientPublicPemBase64");
+var webDpopClientPrivatePemBase64 = builder.AddParameter("WebDpopClientPrivatePemBase64", secret: true);
+var webDpopClientPublicPemBase64 = builder.AddParameter("WebDpopClientPublicPemBase64");
 
-//var stsSigningPrivatePemBase64 = builder.AddParameter("StsSigningPrivatePemBase64", secret: true);
-//var stsSigningPublicPemBase64 = builder.AddParameter("StsSigningPublicPemBase64");
+var stsSigningPrivatePemBase64 = builder.AddParameter("StsSigningPrivatePemBase64", secret: true);
+var stsSigningPublicPemBase64 = builder.AddParameter("StsSigningPublicPemBase64");
 
-var rsa256OidcPrivatePem = builder.AddParameter("Rsa256OidcPrivatePem", secret: true);
-var rsa256OidcPublicPem = builder.AddParameter("Rsa256OidcPublicPem");
 var webOidcClientId = builder.AddParameter("WebOidcClientId");
-
-var stsSigningPrivatePem = builder.AddParameter("StsSigningPrivatePem", secret: true);
-var stsSigningPublicPem = builder.AddParameter("StsSigningPublicPem");
+var webOidcClientSecret = builder.AddParameter("WebOidcClientSecret", secret: true);
 
 var env = builder.AddAzureContainerAppEnvironment("env");
 
@@ -66,9 +63,9 @@ idp = builder.AddProject<Projects.Idp>(IDENTITY_PROVIDER)
     .WithEnvironment("WebOidcAuthority", webOidcAuthority)
     .WithEnvironment("UiUrl", uiUrl)
     .WithEnvironment("WebOidcClientId", webOidcClientId)
-    .WithEnvironment("Rsa256OidcPublicPem", rsa256OidcPublicPem)
-    .WithEnvironment("StsSigningPrivatePem", stsSigningPrivatePem)
-    .WithEnvironment("StsSigningPublicPem", stsSigningPublicPem)
+    .WithEnvironment("StsOidcWebClientPublicPemBase64", stsOidcWebClientPublicPemBase64)
+    .WithEnvironment("StsSigningPrivatePemBase64", stsSigningPrivatePemBase64)
+    .WithEnvironment("StsSigningPublicPemBase64", stsSigningPublicPemBase64)
     .WithEnvironment("MailomatApiKey", mailomatApiKey)
     .WithHttpHealthCheck("/healthcheck");
 
@@ -83,10 +80,23 @@ if (builder.ExecutionContext.IsRunMode)
     });
 }
 
-builder.AddProject<Projects.Ui>("ui")
+api = builder.AddProject<Projects.WebApi>("api-service")
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("WebOidcAuthority", webOidcAuthority)
+    .WithHttpHealthCheck("/health")
     .WaitFor(idp);
 
-builder.AddProject<Projects.WebApi>("webapi")
+ui = builder.AddProject<Projects.Ui>("ui")
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("WebOidcClientId", webOidcClientId)
+    .WithEnvironment("WebOidcAuthority", webOidcAuthority)
+    .WithEnvironment("WebOidcClientSecret", webOidcClientSecret)
+    .WithEnvironment("WebOidcClientPrivatePemBase64", webOidcClientPrivatePemBase64)
+    .WithEnvironment("WebOidcClientPublicPemBase64", webOidcClientPublicPemBase64)
+    .WithEnvironment("WebDpopClientPrivatePemBase64", webDpopClientPrivatePemBase64)
+    .WithEnvironment("WebDpopClientPublicPemBase64", webDpopClientPublicPemBase64)
+    .WithHttpHealthCheck("/health")
+    .WithReference(api)
     .WaitFor(idp);
 
 builder.Build().Run();

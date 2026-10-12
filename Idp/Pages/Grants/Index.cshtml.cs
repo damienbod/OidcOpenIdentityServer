@@ -1,10 +1,10 @@
 // Copyright (c) Duende Software. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Extensions;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Extensions;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -35,15 +35,15 @@ public class Index : PageModel
 
     public async Task OnGet()
     {
-        var grants = await _interaction.GetAllUserGrantsAsync(HttpContext.RequestAborted);
+        var grants = await _interaction.GetAllUserGrantsAsync();
 
         var list = new List<GrantViewModel>();
         foreach (var grant in grants)
         {
-            var client = await _clients.FindClientByIdAsync(grant.ClientId, HttpContext.RequestAborted);
+            var client = await _clients.FindClientByIdAsync(grant.ClientId);
             if (client != null)
             {
-                var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes, HttpContext.RequestAborted);
+                var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
 
                 var item = new GrantViewModel()
                 {
@@ -72,8 +72,8 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        await _interaction.RevokeUserConsentAsync(ClientId, HttpContext.RequestAborted);
-        await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), ClientId), HttpContext.RequestAborted);
+        await _interaction.RevokeUserConsentAsync(ClientId);
+        await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), ClientId));
         Telemetry.Metrics.GrantsRevoked(ClientId);
 
         return RedirectToPage("/Grants/Index");
