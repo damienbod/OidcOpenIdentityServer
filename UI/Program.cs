@@ -48,6 +48,7 @@ builder.Services.AddAuthentication(options =>
     //options.ClientSecret = "test";
 
     options.SaveTokens = true;
+
     options.GetClaimsFromUserInfoEndpoint = true;
     options.MapInboundClaims = false;
 

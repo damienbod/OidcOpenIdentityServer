@@ -17,7 +17,7 @@ public static class AssertionService
     {
         var now = DateTime.UtcNow;
         var clientId = configuration.GetValue<string>("WebOidcClientId");
-        var authority = configuration.GetValue<string>("WebOidcAuthority");
+        var audience = configuration.GetValue<string>("WebOidcAuthority");
 
         var privatePem = ConfigConverter.GetPemFromBase64Config("WebOidcClientPrivatePemBase64", configuration);
         var publicPem = ConfigConverter.GetPemFromBase64Config("WebOidcClientPublicPemBase64", configuration);
@@ -28,7 +28,7 @@ public static class AssertionService
 
         var token = new JwtSecurityToken(
             clientId,
-            authority,
+            audience,
             new List<Claim>()
             {
                 new Claim(JwtClaimTypes.JwtId, Guid.NewGuid().ToString()),
