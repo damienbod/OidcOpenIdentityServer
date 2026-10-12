@@ -2,7 +2,7 @@
 
 ## Setup
 
-![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.drawio.png)
+![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.aspire.drawio.png)
 
 ## History
 - 2026-10-11 Initial version
