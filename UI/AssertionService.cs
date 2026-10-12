@@ -17,7 +17,9 @@ public static class AssertionService
     {
         var now = DateTime.UtcNow;
         var clientId = configuration.GetValue<string>("WebOidcClientId");
-        var audience = configuration.GetValue<string>("WebOidcAuthority");
+        var authority = configuration.GetValue<string>("WebOidcAuthority");
+        var audience = configuration.GetValue<string>("WebOidcTokenEndpoint")
+            ?? $"{authority?.TrimEnd('/')}/connect/token";
 
         var privatePem = ConfigConverter.GetPemFromBase64Config("WebOidcClientPrivatePemBase64", configuration);
         var publicPem = ConfigConverter.GetPemFromBase64Config("WebOidcClientPublicPemBase64", configuration);

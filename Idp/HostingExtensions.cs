@@ -116,6 +116,8 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+
+                options.EmitStaticAudienceClaim = true;
             })
             .AddSigningCredential(ecdsaCertificateKey, "ES256") // ecdsaCertificate
             .AddInMemoryIdentityResources(Config.IdentityResources)
