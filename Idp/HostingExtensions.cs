@@ -117,7 +117,7 @@ internal static class HostingExtensions
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
             })
-            .AddSigningCredential(ecdsaCertificateKey, "ES384") // ecdsaCertificate
+            .AddSigningCredential(ecdsaCertificateKey, "ES256") // ecdsaCertificate
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Environment, builder.Configuration))
