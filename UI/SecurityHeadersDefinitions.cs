@@ -1,6 +1,7 @@
 ﻿namespace Ui;
 
 public static class SecurityHeadersDefinitions
+
 {
     private static HeaderPolicyCollection? policy;
 
