@@ -6,6 +6,7 @@ using Open.IdentityServer.Events;
 using Open.IdentityServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Open.IdentityServer.Models;
 
 namespace Idp.Pages.ServerSideSessions;
 
