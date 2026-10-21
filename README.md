@@ -1,5 +1,7 @@
 # OpenID Connect using Open.IdentityServer
 
+[![.NET](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml)
+
 ## Setup
 
 ![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.aspire.drawio.png)
