@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.13" />
 
-    <PackageReference Include="Open.IdentityServer.EntityFramework" Version="3.0.0" />
+    <PackageReference Include="Open.IdentityServer.EntityFramework" Version="3.1.1" />
     
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13">
       <PrivateAssets>all</PrivateAssets>
