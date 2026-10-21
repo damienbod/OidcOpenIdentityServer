@@ -5,6 +5,7 @@
 ![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.aspire.drawio.png)
 
 ## History
+- 2026-10-21 Updated packages
 - 2026-10-14 Switch to OAuth PAR, update Open.IdentityServer 3.0.0
 - 2026-10-11 Initial version
 
