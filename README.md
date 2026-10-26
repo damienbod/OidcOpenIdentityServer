@@ -2,6 +2,8 @@
 
 [![.NET](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml)
 
+Blogs: [Use Open.IdentityServer for OpenID Connect in an Aspire setup](https://damienbod.com)
+
 ## Setup
 
 ![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.aspire.drawio.png)
