@@ -9,6 +9,7 @@ Blogs: [Use Open.IdentityServer for OpenID Connect in an Aspire setup](https://d
 ![Open.IdentityServer](https://github.com/damienbod/OidcOpenIdentityServer/blob/main/images/system.context.aspire.drawio.png)
 
 ## History
+- 2026-10-26 .NET 10.0.14
 - 2026-10-24 Updated packages
 - 2026-10-21 Updated Open.IdentityServer
 - 2026-10-14 Switch to OAuth PAR, updated Open.IdentityServer 3.0.0
