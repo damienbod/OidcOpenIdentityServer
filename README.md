@@ -2,6 +2,8 @@
 
 [![.NET](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/OidcOpenIdentityServer/actions/workflows/dotnet.yml)
 
+OidcOpenIdentityServer is a cloud-native identity platform sample built with Open.IdentityServer, ASP.NET Core, and .NET Aspire. It demonstrates how to implement secure authentication and authorization using modern OpenID Connect (OIDC) and OAuth 2.0 standards, including token issuance, client authentication flows, and protected API access. The project combines backend identity services with web UI assets to provide a practical reference for building standards-based identity solutions in .NET.
+
 Blogs: [Use Open.IdentityServer for OpenID Connect in an Aspire setup](https://damienbod.com)
 
 ## Setup
